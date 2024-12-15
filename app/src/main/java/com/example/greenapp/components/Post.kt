@@ -59,7 +59,6 @@ fun Post(postData: PostsData, fireBaseForumPostApi: FireBaseForumPostApi, curren
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        // Kullanıcı Bilgileri ve Tarih
         Row(
             modifier = Modifier
                 .fillMaxWidth()

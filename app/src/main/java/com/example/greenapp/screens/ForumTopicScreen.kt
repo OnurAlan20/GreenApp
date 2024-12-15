@@ -16,7 +16,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.greenapp.R
@@ -29,68 +28,7 @@ import com.example.greenapp.model.TopicData
 @Composable
 fun ForumTopicScreen(navController: NavHostController) {
 
-    val topics = listOf(
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Küresel Isınma",
-            userName = "Onur Alan",
-            isLiked = true
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Plastik Atıklar",
-            userName = "GreenWarrior123",
-            isLiked = false
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Sürdürülebilir Moda",
-            userName = "Fashionista202",
-            isLiked = true
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Sürdürülebilir Moda",
-            userName = "Fashionista202",
-            isLiked = true
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Sürdürülebilir Moda",
-            userName = "Fashionista202",
-            isLiked = true
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Sürdürülebilir Moda",
-            userName = "Fashionista202",
-            isLiked = true
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Sürdürülebilir Moda",
-            userName = "Fashionista202",
-            isLiked = true
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Sürdürülebilir Moda",
-            userName = "Fashionista202",
-            isLiked = true
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Sürdürülebilir Moda",
-            userName = "Fashionista202",
-            isLiked = true
-        ),
-        TopicData(
-            image = painterResource(R.drawable.ic_launcher_background),
-            topicTitle = "Sürdürülebilir Moda",
-            userName = "Fashionista202",
-            isLiked = true
-        ),
-    )
+    val topics:List<TopicData> = listOf()
 
     Scaffold(
         bottomBar = {
@@ -101,7 +39,11 @@ fun ForumTopicScreen(navController: NavHostController) {
             )
         },
         topBar = {
-            EcoForumTopAppBar {
+            EcoForumTopAppBar(
+                iconId = R.drawable.menu_icon,
+                title = "Green Forum"
+            ) {
+                navController.navigate("forum_posts")
             }
         }
     ) { innerPadding ->

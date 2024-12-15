@@ -10,18 +10,34 @@ class FireBaseForumPostApi {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    fun addPost(post: PostsData, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        firestore.collection("posts")
-            .add(post)
-            .addOnSuccessListener {
-                Log.d("Firebase", "Post başarıyla eklendi!")
-                onSuccess()
+    fun addPost(
+        post: PostsData,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        FireBaseAuthApi.getUserData(
+            onSuccess = { user ->
+                val updatedPost = post.copy(userName = user.userName)
+
+                firestore.collection("posts")
+                    .add(updatedPost)
+                    .addOnSuccessListener {
+                        Log.d("Firebase", "Post başarıyla eklendi!")
+                        onSuccess()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firebase", "Post eklenirken hata oluştu.", e)
+                        onFailure(e)
+                    }
+            },
+            onFail = { error ->
+                Log.e("Firebase", "Kullanıcı verisi alınamadı: $error")
+                onFailure(Exception("Kullanıcı verisi alınamadı: $error"))
             }
-            .addOnFailureListener { e ->
-                Log.e("Firebase", "Post eklenirken hata oluştu.", e)
-                onFailure(e)
-            }
+        )
     }
+
+
 
     fun getPosts(onSuccess: (List<PostsData>) -> Unit, onFailure: (Exception) -> Unit) {
         firestore.collection("posts")

@@ -12,36 +12,34 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.greenapp.R
 
 @Composable
-fun EcoForumTopAppBar(onMenuClick: () -> Unit) {
+fun EcoForumTopAppBar(iconId:Int,title:String,onIconClick: () -> Unit) {
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(62.dp),
         title = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // Menü İkonu
-                IconButton(onClick = onMenuClick) {
+                IconButton(onClick = onIconClick) {
                     Icon(
-                        painter = painterResource(id = R.drawable.menu_icon), // Menü ikonu
-                        contentDescription = "Menu"
-                    )
+                        painter = painterResource(id = iconId),
+                        contentDescription = "Menu",
+                        tint = Color.Black,)
                 }
                 // Başlık
                 Text(
-                    text = "Eco Forum",
+                    text = title,
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.Black,
                     modifier = Modifier.padding(start = 8.dp)

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.greenapp.R
 import com.example.greenapp.components.BottomAppBar
 import com.example.greenapp.components.EcoForumTopAppBar
 import com.example.greenapp.components.Post
@@ -61,7 +62,12 @@ fun ForumPostScreen(navController: NavHostController) {
             )
         },
         topBar = {
-            EcoForumTopAppBar { /* Top bar actions */ }
+            EcoForumTopAppBar(
+                iconId = R.drawable.menu_icon,
+                title = "Green Forum"
+            ) {
+                navController.navigate("forum_posts")
+            }
         }
     ) { innerPadding ->
         Surface(

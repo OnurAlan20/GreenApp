@@ -67,9 +67,6 @@ public object FireBaseAuthApi {
 
     }
 
-    /**
-     * Get the current date in "yyyy-MM-dd HH:mm:ss" format.
-     */
     private fun getCurrentDate(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return dateFormat.format(Date())
