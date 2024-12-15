@@ -74,12 +74,22 @@ public object FireBaseAuthApi {
     fun getLoggedInUser():String{
         return firebaseUser.uid
     }
-    fun getUserData(onSuccess:(userData:UserModel)->Unit,onFail:(e:String)->Unit){
-        firestore.collection("users").document(firebaseUser.uid).get().addOnSuccessListener {
-            println("User successfully get!")
-            onSuccess(it.data as UserModel)
-        }.addOnFailureListener {
+    suspend fun getUserData(onFail:(e:String)->Unit={}):MutableMap<String,Any>?{
+        val data = firestore.collection("users").document(getLoggedInUser()).get().await()
+        return data.data
+    }
+    suspend fun updateUserData(userName:String,lastName:String,firstName:String,phoneNumber: String,email: String,onFail:(e:String)->Unit={},onSuccess: () -> Unit){
+        val updatedData = mapOf(
+            "userName" to userName,
+            "lastName" to lastName,
+            "firstName" to firstName,
+            "phoneNumber" to phoneNumber,
+            "email" to email
+        )
+        firestore.collection("users").document(getLoggedInUser()).update(updatedData).addOnFailureListener {
             onFail(it.localizedMessage)
+        }.addOnSuccessListener {
+            onSuccess()
         }
 
     }
