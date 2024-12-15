@@ -16,7 +16,7 @@ fun TopicCreationButton(onClick: () -> Unit) {
         onClick = onClick,
         containerColor = Color.Green,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(16.dp),
     ) {
         Icon(
             painter = painterResource(id = R.drawable.add_button),

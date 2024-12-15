@@ -110,7 +110,7 @@ fun BottomAppBar(
                             .fillMaxHeight()
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.settings_filled_icon),
+                            painter = painterResource(id = R.drawable.setting),
                             contentDescription = "Settings",
                             modifier = Modifier
                                 .size(23.dp)

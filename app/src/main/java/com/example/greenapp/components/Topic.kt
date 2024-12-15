@@ -76,9 +76,9 @@ fun Topic(
         IconButton(onClick = onLikeClick) {
             Icon(
                 painter = if (isLiked) {
-                    painterResource(id = R.drawable.like)
+                    painterResource(id = R.drawable.favourite_filled)
                 } else {
-                    painterResource(id = R.drawable.un_like)
+                    painterResource(id = R.drawable.favourite)
                 },
                 contentDescription = if (isLiked) "Liked" else "Not Liked",
                 tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface

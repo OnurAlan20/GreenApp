@@ -66,5 +66,9 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore")
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("org.json:json:20230227")
+
+
 
 }
