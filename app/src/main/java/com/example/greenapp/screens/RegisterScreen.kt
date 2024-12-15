@@ -1,4 +1,5 @@
 package com.example.greenapps.screens
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,15 +39,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.greenapp.R
+import com.example.greenapp.network.FireBaseAuthApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-
-
-
-
-
-
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun RegisterScreen(onLoginClick: () -> Unit) {
+    val context = LocalContext.current // Toast için context gerekiyor
+    val firebaseAuthApi = FireBaseAuthApi() // FirebaseAuthApi sınıfının örneği
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -52,7 +60,8 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     var isChecked by remember { mutableStateOf(false) }
-
+    var showToast by remember { mutableStateOf(false) }
+    var toastText by remember { mutableStateOf("") }
     val greenColor = Color(0xFF00C853)
 
     Surface {
@@ -164,16 +173,48 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+            if (showToast){
+                Toast.makeText(context, "Error: " + toastText, Toast.LENGTH_LONG).show()
+            }
 
             // Register Button
             Button(
-                onClick = { /* Handle registration */ },
+                onClick = {
+
+                        if (password == confirmPassword) {
+                            if (isChecked) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    try {
+                                        val regResult = firebaseAuthApi.register(username, email, password, onComplete = {
+                                            Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                                            onLoginClick() // Navigate to the login screen
+                                        }, onFailed = {it->
+                                            toastText = it
+                                            showToast = true
+                                        })
+                                        println("Register Send")
+
+                                    } catch (e: Exception) {
+                                        withContext(Dispatchers.Main) {
+                                            Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+                                        }
+                                        println("Registration error: ${e.printStackTrace()}")
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(context, "Please accept the Terms and Conditions.", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Passwords do not match.", Toast.LENGTH_SHORT).show()
+                        }
+
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = greenColor)
             ) {
-                Text("Register")
+                Text(text = "Register", color = Color.White)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
