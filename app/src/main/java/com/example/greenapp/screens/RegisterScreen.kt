@@ -100,7 +100,33 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                 color = Color.Gray,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = { firstName = it },
+                label = { Text("Firstname") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
 
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = { Text("Lastname") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = phoneNumber,
+                onValueChange = { phoneNumber = it },
+                label = { Text("Phone Number") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
             // Username field
             OutlinedTextField(
                 value = username,
@@ -189,7 +215,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                             if (isChecked) {
                                 CoroutineScope(Dispatchers.IO).launch {
                                     try {
-                                        val regResult = FireBaseAuthApi.register(username, email, password, onComplete = {
+                                        val regResult = FireBaseAuthApi.register(firstName,lastName,phoneNumber,username, email, password, onComplete = {
                                             Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
                                             onLoginClick() // Navigate to the login screen
                                         }, onFailed = {it->

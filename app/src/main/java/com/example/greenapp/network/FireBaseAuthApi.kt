@@ -18,7 +18,7 @@ public object FireBaseAuthApi {
     /**
      * Register a new user with email and password and save user data in Firestore.
      */
-    fun register(userName: String, email: String, password: String,onComplete:()->Unit,onFailed:(err:String)->Unit) {
+    fun register(firstName:String,lastName:String,phoneNumber:String,userName: String, email: String, password: String,onComplete:()->Unit,onFailed:(err:String)->Unit) {
             // Create user with Firebase Authentication
             val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
                 it ->
@@ -27,7 +27,10 @@ public object FireBaseAuthApi {
                     userName = userName,
                     email = email,
                     id = it.user!!.uid,
-                    createdDate = createdDate
+                    createdDate = createdDate,
+                    firstName=firstName,
+                    lastName=lastName,
+                    phoneNumber=phoneNumber
                 )
                 // Save the user data in Firestore
                 firestore.collection("users").document(it.user!!.uid).set(user).addOnSuccessListener {
@@ -71,7 +74,16 @@ public object FireBaseAuthApi {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return dateFormat.format(Date())
     }
-     fun getLoggedInUser():String{
+    fun getLoggedInUser():String{
         return firebaseUser.uid
+    }
+    fun getUserData(onSuccess:(userData:UserModel)->Unit,onFail:(e:String)->Unit){
+        firestore.collection("users").document(firebaseUser.uid).get().addOnSuccessListener {
+            println("User successfully get!")
+            onSuccess(it.data as UserModel)
+        }.addOnFailureListener {
+            onFail(it.localizedMessage)
+        }
+
     }
 }
