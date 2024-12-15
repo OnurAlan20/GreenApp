@@ -1,5 +1,10 @@
 package com.example.greenapp.screens
 
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -39,12 +45,36 @@ import com.example.greenapp.model.PostsData
 import com.example.greenapp.network.FireBaseForumPostApi
 import kotlinx.coroutines.launch
 import java.util.Date
+import java.util.UUID
 
 @Composable
 fun ForumPostCreateScreen(navController: NavHostController) {
     var content by remember { mutableStateOf(TextFieldValue("")) }
     val firebaseForumPostApi = FireBaseForumPostApi()
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var selectedImageUrl by remember { mutableStateOf("") }
+
+    val selectImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            val file = firebaseForumPostApi.uriToFile(context, uri)
+            if (file != null) {
+                coroutineScope.launch {
+                    firebaseForumPostApi.uploadImageToImgBB(
+                        file = file,
+                        fileName = UUID.randomUUID().toString(),
+                        onSuccess = { url ->
+                            selectedImageUrl = url
+                            println(selectedImageUrl)
+                        },
+                        onFailure = { error ->
+                            println(error)
+                        }
+                    )
+                }
+            }
+        }
+    }
 
 
     Scaffold(
@@ -87,7 +117,7 @@ fun ForumPostCreateScreen(navController: NavHostController) {
 
                 Button(
                     onClick = {
-                    /* TODO: Resim ekleme işlemi burada yapılacak */
+                        selectImageLauncher.launch("image/*")
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -117,7 +147,7 @@ fun ForumPostCreateScreen(navController: NavHostController) {
                             userImage = "https://picsum.photos/400/400",
                             userName = "onur",
                             text = content.text,
-                            image = "https://picsum.photos/400/400",
+                            image = selectedImageUrl,
                             likeCount = 0,
                             likedUsers = listOf(),
                             creationDate = Date()
