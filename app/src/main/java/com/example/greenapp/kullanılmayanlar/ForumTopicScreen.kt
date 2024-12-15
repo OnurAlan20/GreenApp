@@ -1,5 +1,5 @@
-package com.example.greenapp.screens
-
+package com.example.greenapp.kullanılmayanlar
+/*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -94,3 +94,5 @@ fun ForumTopicScreen(navController: NavHostController) {
         }
     }
 }
+
+ */

@@ -115,8 +115,8 @@ fun ForumPostCreateScreen(navController: NavHostController) {
                     onClick = {
                         val newPost = PostsData(
                             userImage = "https://picsum.photos/400/400",
-                            userName = "",
-                            text = "Bu bir örnek post.",
+                            userName = "onur",
+                            text = content.text,
                             image = "https://picsum.photos/400/400",
                             likeCount = 0,
                             likedUsers = listOf(),
@@ -128,6 +128,7 @@ fun ForumPostCreateScreen(navController: NavHostController) {
                                 post = newPost,
                                 onSuccess = {
                                     println("Post başarıyla eklendi!")
+                                    navController.navigate("forum_posts")
                                 },
                                 onFailure = { e ->
                                     println("Post eklenirken hata oluştu: ${e.message}")
