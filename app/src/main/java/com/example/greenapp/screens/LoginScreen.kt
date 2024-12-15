@@ -1,5 +1,7 @@
 package com.example.greenapp.screens
 
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,16 +29,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
+import com.example.greenapp.MainActivity
 import com.example.greenapp.R
+import com.example.greenapp.network.FireBaseAuthApi
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun LoginScreen(
     onRegisterClick:()->Unit
 ) {
+    val context = LocalContext.current
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val passwordVisibility = remember { mutableStateOf(false) }
+    var toastText by remember {
+        mutableStateOf("")
+    }
+    var showToast by remember {
+        mutableStateOf(false)
+    }
     val greenColor = Color(0xFF00C853)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,8 +122,27 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         // Login Button
+        if (showToast){
+            Toast.makeText(context,toastText,Toast.LENGTH_SHORT).show()
+            showToast = false
+        }
         Button(
-            onClick = { /* Handle login */ },
+            onClick = {
+                GlobalScope.launch(Dispatchers.IO) {
+                    val result = FireBaseAuthApi.login(email=email.value,password=password.value, onSuccess = {
+                        toastText = "Login Success!"
+                        showToast = true
+                        val intent = Intent(context, MainActivity::class.java)
+                        startActivity(context,intent,null) // This starts MainActivity
+
+                    }, onFailed = {
+                        toastText = it
+                        showToast = true
+                    })
+
+                }
+
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),

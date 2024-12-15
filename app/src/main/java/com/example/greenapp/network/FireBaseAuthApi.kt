@@ -9,9 +9,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-public class FireBaseAuthApi {
+public object FireBaseAuthApi {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private lateinit var firebaseUser: FirebaseUser
+    private lateinit var loggedInUser: UserModel
 
     /**
      * Register a new user with email and password and save user data in Firestore.
@@ -50,13 +52,16 @@ public class FireBaseAuthApi {
     /**
      * Login a user with email and password.
      */
-    suspend fun login(email: String, password: String): Result<Unit> {
-        return try {
-            firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+    suspend fun login(email: String, password: String,onSuccess:()->Unit,onFailed: (err: String) -> Unit){
+
+        val a = firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+            onSuccess()
+            firebaseUser = it.user!!
+        }.addOnFailureListener {
+            onFailed(it.localizedMessage)
         }
+
+
     }
 
     /**
@@ -65,5 +70,8 @@ public class FireBaseAuthApi {
     private fun getCurrentDate(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return dateFormat.format(Date())
+    }
+     fun getLoggedInUser():String{
+        return firebaseUser.uid
     }
 }

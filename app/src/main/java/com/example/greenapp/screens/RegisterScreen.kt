@@ -53,7 +53,6 @@ import okhttp3.internal.wait
 @Composable
 fun RegisterScreen(onLoginClick: () -> Unit) {
     val context = LocalContext.current // Toast için context gerekiyor
-    val firebaseAuthApi = FireBaseAuthApi() // FirebaseAuthApi sınıfının örneği
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -187,7 +186,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                             if (isChecked) {
                                 CoroutineScope(Dispatchers.IO).launch {
                                     try {
-                                        val regResult = firebaseAuthApi.register(username, email, password, onComplete = {
+                                        val regResult = FireBaseAuthApi.register(username, email, password, onComplete = {
                                             Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
                                             onLoginClick() // Navigate to the login screen
                                         }, onFailed = {it->

@@ -29,7 +29,7 @@ class LoginRegisterActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "register"
+                        startDestination = "login"
                     ) {
                         composable("login") {
                             LoginScreen(onRegisterClick = { navController.navigate("register") })
