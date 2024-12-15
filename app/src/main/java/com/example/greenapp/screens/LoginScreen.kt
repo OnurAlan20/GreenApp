@@ -30,6 +30,7 @@ import com.example.greenapp.R
 
 @Composable
 fun LoginScreen(
+    onRegisterClick:()->Unit
 ) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
@@ -124,14 +125,11 @@ fun LoginScreen(
                 text = "Don't have an account? Sign Up",
                 color = Color.Gray,
                 fontSize = 12.sp,
-                modifier = Modifier.clickable { /* Handle sign up */ }
+                modifier = Modifier.clickable {
+                    System.out.println("REGISTERRRR")
+                    onRegisterClick()
+                }
             )
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PreviewLoginScreen(){
-    LoginScreen()
 }

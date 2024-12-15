@@ -1,5 +1,6 @@
 package com.example.greenapps.screens
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,12 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -34,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.example.greenapp.R
 
 @Composable
-fun RegisterScreen(){
+fun RegisterScreen(onLoginClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -45,137 +49,144 @@ fun RegisterScreen(){
 
     val greenColor = Color(0xFF00C853)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // App logo or circular icon placeholder
-        Image(
-            painter = painterResource(id = R.drawable.loginlogo), // Replace with your logo resource
-            contentDescription = "App Logo",
-            modifier = Modifier.size(200.dp)
-                .padding(16.dp)
-        )
-
-        Text(
-            text = "Create Your Account on Green App",
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            color = Color.Black,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        Text(
-            text = "Welcome to Green App! Join us today to enjoy a seamless experience.",
-            fontSize = 14.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        // Username field
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Email field
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Password field
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        painterResource(id = if (passwordVisible) R.drawable.visibility else R.drawable.visiblityoff),
-                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
-                        ,Modifier.size(26.dp))
-                }
-            },
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Confirm Password field
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        painterResource(id = if (passwordVisible) R.drawable.visibility else R.drawable.visiblityoff),
-                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
-                        ,Modifier.size(26.dp))
-                }
-            },
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Terms and Conditions Checkbox
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = isChecked, onCheckedChange = { isChecked = it })
-            Text(
-                text = "I agree to the Terms and Conditions",
-                modifier = Modifier.padding(start = 4.dp),
-                fontSize = 12.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        // Login Text
-        TextButton(onClick = { /* Navigate to Login */ }) {
-            Text(
-                text = "Already have an account? Log In",
-                color = Color.Gray,
-                fontSize = 12.sp
-            )
-        }
-        // Register Button
-        Button(
-            onClick = { /* Handle Register */ },
+    Surface {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = greenColor)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()) // Scroll özelliği eklendi
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Register", color = Color.White, fontSize = 16.sp)
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // App logo or circular icon placeholder
+            Image(
+                painter = painterResource(id = R.drawable.loginlogo), // Replace with your logo resource
+                contentDescription = "App Logo",
+                modifier = Modifier
+                    .size(150.dp) // Daha uygun bir boyut için küçültüldü
+                    .padding(16.dp)
+            )
+
+            Text(
+                text = "Create Your Account on Green App",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            Text(
+                text = "Welcome to Green App! Join us today to enjoy a seamless experience.",
+                fontSize = 14.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            // Username field
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Email field
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Password field
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            painterResource(id = if (passwordVisible) R.drawable.visibility else R.drawable.visiblityoff),
+                            contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                            modifier = Modifier.size(26.dp)
+                        )
+                    }
+                },
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Confirm Password field
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text("Confirm Password") },
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                        Icon(
+                            painterResource(id = if (confirmPasswordVisible) R.drawable.visibility else R.drawable.visiblityoff),
+                            contentDescription = if (confirmPasswordVisible) "Hide password" else "Show password",
+                            modifier = Modifier.size(26.dp)
+                        )
+                    }
+                },
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Terms and Conditions Checkbox
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = isChecked, onCheckedChange = { isChecked = it })
+                Text(
+                    text = "I agree to the Terms and Conditions",
+                    modifier = Modifier.padding(start = 4.dp),
+                    fontSize = 12.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Register Button
+            Button(
+                onClick = { /* Handle registration */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = greenColor)
+            ) {
+                Text("Register")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Login link
+            Row {
+                Text(
+                    text = "Already have an account? Log In",
+                    modifier = Modifier.clickable(onClick = {onLoginClick()}),
+                    color = Color.Gray
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
     }
 }
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewRegisterScreen(){
-    RegisterScreen()
+    RegisterScreen{}
 }
