@@ -18,14 +18,8 @@ fun MainNavGraph(navController: NavHostController) {
         composable("forum_posts") {
             ForumPostScreen(navController)
         }
-        composable("forum_topics") {
-            ForumTopicScreen(navController)
-        }
         composable("create_post") {
             ForumPostCreateScreen(navController)
-        }
-        composable("create_topic") {
-            ForumTopicCreateScreen(navController)
         }
         composable("settings_menu") {
             SettingsScreen(navController)
