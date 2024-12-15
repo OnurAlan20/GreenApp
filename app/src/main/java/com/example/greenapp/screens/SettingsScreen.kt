@@ -49,7 +49,7 @@ import com.example.greenapps.screens.RegisterScreen
 @Composable
 fun SettingsScreen(navHostController: NavHostController){
     val navController = rememberNavController()
-    Scaffold (topBar = { SettingsTopAppBar{} }, bottomBar = { SettingsBottomAppBar(navController) }){
+    Scaffold (topBar = { SettingsTopAppBar(title = "Settings") }, bottomBar = { SettingsBottomAppBar(navController) }){
         it->
         Surface(modifier = Modifier.fillMaxSize(1f).padding(it)) {
             SettingsMenu {  }
@@ -98,7 +98,7 @@ fun SettingsBottomAppBar(navController: NavHostController){
     BottomAppBar(
         onChatClick = { navController.navigate("forum_topics")},
         onForumClick = { navController.navigate("forum_posts") },
-        onSettingsClick = { navController.navigate("forum_topics") }
+        onSettingsClick = { navController.navigate("settings_menu") }
     )
 }
 
@@ -106,7 +106,7 @@ fun SettingsBottomAppBar(navController: NavHostController){
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsTopAppBar(onMenuClick: () -> Unit={}) {
+fun SettingsTopAppBar(onMenuClick: () -> Unit={},title: String="Settings",pos:Float=0.35f) {
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth(),
@@ -117,7 +117,7 @@ fun SettingsTopAppBar(onMenuClick: () -> Unit={}) {
                 modifier = Modifier.fillMaxWidth().padding(top = 5.dp, bottom = 7.dp)
             ) {
                 // Menü İkonu
-                IconButton(onClick = onMenuClick,modifier = Modifier.background(color = Color.Transparent).fillMaxWidth(0.35f)) {
+                IconButton(onClick = onMenuClick,modifier = Modifier.background(color = Color.Transparent).fillMaxWidth(pos)) {
                     Row(Modifier.fillMaxWidth(1f)) {
                         Icon(
                             imageVector = Icons.Sharp.KeyboardArrowLeft, // Menü ikonu
@@ -127,9 +127,9 @@ fun SettingsTopAppBar(onMenuClick: () -> Unit={}) {
                 }
                 // Başlık
                 Text(
-                    text = "Settings",
+                    text = title,
                     style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center,
+
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 8.dp)

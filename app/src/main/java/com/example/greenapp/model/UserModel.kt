@@ -4,5 +4,8 @@ data class UserModel(
     val userName: String,
     val email:String,
     val id:String,
-    val createdDate:String
+    val createdDate:String,
+    val firstName:String,
+    val lastName:String,
+    val phoneNumber:String
 )

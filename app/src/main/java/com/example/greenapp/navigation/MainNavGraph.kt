@@ -29,5 +29,8 @@ fun MainNavGraph(navController: NavHostController) {
         composable("settings_menu") {
             SettingsScreen(navController)
         }
+        composable("profile_setting") {
+
+        }
     }
 }
