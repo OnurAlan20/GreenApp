@@ -21,14 +21,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.greenapp.R
 
 @Composable
-fun BottomAppBar(
-    onChatClick: () -> Unit,
-    onForumClick: () -> Unit,
-    onSettingsClick: () -> Unit
-) {
+fun BottomAppBar(navController: NavHostController) {
     BottomAppBar(
         modifier = Modifier.height(80.dp),
         containerColor = Color.White
@@ -46,7 +43,9 @@ fun BottomAppBar(
                     .weight(1f)
                     .fillMaxHeight()
             ) {
-                IconButton(onClick = onChatClick, modifier = Modifier.fillMaxSize()) {
+                IconButton(onClick = {
+                    navController.navigate("ai_screen")
+                }, modifier = Modifier.fillMaxSize()) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -72,7 +71,9 @@ fun BottomAppBar(
                     .weight(1f)
                     .fillMaxHeight()
             ) {
-                IconButton(onClick = onForumClick, modifier = Modifier.fillMaxSize()) {
+                IconButton(onClick = {
+                    navController.navigate("forum_posts")
+                }, modifier = Modifier.fillMaxSize()) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -102,7 +103,9 @@ fun BottomAppBar(
                     .weight(1f)
                     .fillMaxHeight()
             ) {
-                IconButton(onClick = onSettingsClick, modifier = Modifier.fillMaxSize()) {
+                IconButton(onClick = {
+                    navController.navigate("profile_setting")
+                }, modifier = Modifier.fillMaxSize()) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier

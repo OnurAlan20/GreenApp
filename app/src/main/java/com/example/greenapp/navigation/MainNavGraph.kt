@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.greenapp.screens.AiScreen
 import com.example.greenapp.screens.ForumPostCreateScreen
 import com.example.greenapp.screens.ForumPostScreen
 import com.example.greenapp.screens.ProfileSettingScreen
@@ -23,6 +24,9 @@ fun MainNavGraph(navController: NavHostController) {
         }
         composable("profile_setting") {
             ProfileSettingScreen(navController)
+        }
+        composable("ai_screen") {
+            AiScreen(navController)
         }
     }
 }

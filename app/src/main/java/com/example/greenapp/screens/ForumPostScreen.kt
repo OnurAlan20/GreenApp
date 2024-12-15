@@ -56,9 +56,7 @@ fun ForumPostScreen(navController: NavHostController) {
     Scaffold(
         bottomBar = {
             BottomAppBar(
-                onChatClick = { navController.navigate("forum_topics")},
-                onForumClick = { navController.navigate("forum_posts") },
-                onSettingsClick = { navController.navigate("forum_topics") }
+                navController
             )
         },
         topBar = {
