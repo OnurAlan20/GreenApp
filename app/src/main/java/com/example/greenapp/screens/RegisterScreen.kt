@@ -47,6 +47,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.wait
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
@@ -175,6 +176,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             if (showToast){
                 Toast.makeText(context, "Error: " + toastText, Toast.LENGTH_LONG).show()
+                showToast = false
             }
 
             // Register Button
