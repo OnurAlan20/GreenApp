@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +43,10 @@ import androidx.navigation.NavHostController
 import com.example.greenapp.R
 import com.example.greenapp.components.EcoForumTopAppBar
 import com.example.greenapp.model.PostsData
+import com.example.greenapp.model.UserModel
+import com.example.greenapp.network.FireBaseAuthApi
 import com.example.greenapp.network.FireBaseForumPostApi
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
@@ -53,7 +57,10 @@ fun ForumPostCreateScreen(navController: NavHostController) {
     val firebaseForumPostApi = FireBaseForumPostApi()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
     var selectedImageUrl by remember { mutableStateOf("") }
+    var userImage by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("") }
 
     val selectImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
@@ -76,6 +83,13 @@ fun ForumPostCreateScreen(navController: NavHostController) {
         }
     }
 
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val data = FireBaseAuthApi.getUserData()
+            userName = data?.get("userName").toString()
+            userImage = data?.get("userImage").toString()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -143,27 +157,30 @@ fun ForumPostCreateScreen(navController: NavHostController) {
 
                 Button(
                     onClick = {
-                        val newPost = PostsData(
-                            userImage = "https://picsum.photos/400/400",
-                            userName = "onur",
-                            text = content.text,
-                            image = selectedImageUrl,
-                            likeCount = 0,
-                            likedUsers = listOf(),
-                            creationDate = Date()
-                        )
-
                         coroutineScope.launch {
-                            firebaseForumPostApi.addPost(
-                                post = newPost,
-                                onSuccess = {
-                                    println("Post başarıyla eklendi!")
-                                    navController.navigate("forum_posts")
-                                },
-                                onFailure = { e ->
-                                    println("Post eklenirken hata oluştu: ${e.message}")
-                                }
-                            )
+                            if (selectedImageUrl != ""){
+                                val newPost = PostsData(
+                                    userImage = userImage,
+                                    userName = userName,
+                                    text = content.text,
+                                    image = selectedImageUrl,
+                                    likeCount = 0,
+                                    likedUsers = listOf(),
+                                    creationDate = Date()
+                                )
+                                firebaseForumPostApi.addPost(
+                                    post = newPost,
+                                    onSuccess = {
+                                        println("Post başarıyla eklendi!")
+                                        navController.navigate("forum_posts")
+                                    },
+                                    onFailure = { e ->
+                                        println("Post eklenirken hata oluştu: ${e.message}")
+                                    }
+                                )
+                            }else{
+                                Toast.makeText(context,"Lütfen resim seçin",Toast.LENGTH_SHORT).show()
+                            }
                         }
                     },
                     modifier = Modifier

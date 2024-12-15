@@ -1,10 +1,8 @@
 package com.example.greenapp.components
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +40,6 @@ import com.example.greenapp.model.PostsData
 import com.example.greenapp.network.FireBaseForumPostApi
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import kotlin.coroutines.coroutineContext
 
 @SuppressLint("NewApi")
 @Composable

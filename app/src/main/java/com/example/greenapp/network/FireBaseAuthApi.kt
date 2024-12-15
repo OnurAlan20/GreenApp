@@ -30,7 +30,8 @@ public object FireBaseAuthApi {
                     createdDate = createdDate,
                     firstName=firstName,
                     lastName=lastName,
-                    phoneNumber=phoneNumber
+                    phoneNumber=phoneNumber,
+                    userImage = "https://i.ibb.co/KFn2b9X/3d2c9aba-f834-476e-8a46-30b3e5b77f8b.jpg"
                 )
                 // Save the user data in Firestore
                 firestore.collection("users").document(it.user!!.uid).set(user).addOnSuccessListener {
