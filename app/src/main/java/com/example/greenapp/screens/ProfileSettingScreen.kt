@@ -1,5 +1,7 @@
 package com.example.greenapp.screens
 
+import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,16 +40,35 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.greenapp.R
+import com.example.greenapp.network.FireBaseAuthApi
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
+@SuppressLint("CoroutineCreationDuringComposition")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileSettingScreen(navHostController: NavHostController = rememberNavController()){
     val navController = rememberNavController()
+    val context = LocalContext.current
     var username by remember { mutableStateOf("EmilyJ") }
     var email by remember { mutableStateOf("emily.j@example.com") }
     var phoneNumber by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+    var showToast by remember { mutableStateOf(false) }
+    var toastMessage by remember { mutableStateOf("") }
     val greenColor = Color(0xFF00C853)
-
+    GlobalScope.launch(Dispatchers.IO) {
+        val data = FireBaseAuthApi.getUserData {  }
+        username= data?.get("userName").toString()
+        email = data?.get("email").toString()
+        phoneNumber = data?.get("phoneNumber").toString()
+        firstName = data?.get("firstName").toString()
+        lastName = data?.get("lastName").toString()
+    }
     Scaffold (topBar = { SettingsTopAppBar(title = "Profile Settings", pos = 0.25f) }, bottomBar = { SettingsBottomAppBar(navController) }){
             it->
         Surface(modifier = Modifier.fillMaxSize(1f).padding(it).background(Color(0xFFE8E8E8))) {
@@ -62,7 +84,7 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
 
                 // Profile Image
                 AsyncImage(
-                    model = "https://example.com/profile-image.jpg", // Replace with actual URL
+                    model = "", // Replace with actual URL
                     contentDescription = "Profile Picture",
                     placeholder = painterResource(id = R.drawable.place_holder_pp), // Add a placeholder resource
                     modifier = Modifier
@@ -74,7 +96,7 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
 
                 // Profile Name
                 Text(
-                    text = "Emily Johnson",
+                    text = firstName + " " + lastName,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -82,7 +104,7 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
 
                 // Username handle
                 Text(
-                    text = "@emilyj",
+                    text = "@"+username,
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -103,10 +125,29 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
                 TextInputField(label = "Phone Number", value = phoneNumber) { phoneNumber = it }
 
                 Spacer(modifier = Modifier.height(24.dp))
-
+                if (showToast){
+                    Toast.makeText(context,toastMessage,Toast.LENGTH_SHORT)
+                    showToast=false
+                }
                 // Save Changes Button
                 Button(
-                    onClick = { /* TODO: Save changes logic */ },
+                    onClick = { GlobalScope.launch(Dispatchers.IO) {
+                        FireBaseAuthApi.updateUserData(
+                            userName = username,
+                            lastName = lastName,
+                            firstName = firstName,
+                            email = email,
+                            phoneNumber = phoneNumber,
+                            onSuccess = {
+                                toastMessage= "Successfully Updated!"
+                                showToast = true
+                            },
+                            onFail = {
+                                toastMessage = it
+                                showToast = true
+                            }
+                        )
+                    } },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -125,7 +166,9 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
 
                 // Delete Account Text
                 TextButton(
-                    onClick = { /* TODO: Delete account logic */ },
+                    onClick = {
+
+                    },
 
                     modifier = Modifier.fillMaxWidth(1f),
                     shape = RectangleShape

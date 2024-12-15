@@ -8,6 +8,7 @@ import com.example.greenapp.screens.ForumPostCreateScreen
 import com.example.greenapp.screens.ForumPostScreen
 import com.example.greenapp.screens.ForumTopicCreateScreen
 import com.example.greenapp.screens.ForumTopicScreen
+import com.example.greenapp.screens.ProfileSettingScreen
 import com.example.greenapp.screens.SettingsScreen
 import com.example.greenapp.screens.SettingsScreen
 
@@ -30,7 +31,7 @@ fun MainNavGraph(navController: NavHostController) {
             SettingsScreen(navController)
         }
         composable("profile_setting") {
-
+            ProfileSettingScreen(navController)
         }
     }
 }

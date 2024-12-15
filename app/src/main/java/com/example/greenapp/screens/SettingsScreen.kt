@@ -1,6 +1,7 @@
 package com.example.greenapp.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,7 +53,9 @@ fun SettingsScreen(navHostController: NavHostController){
     Scaffold (topBar = { SettingsTopAppBar(title = "Settings") }, bottomBar = { SettingsBottomAppBar(navController) }){
         it->
         Surface(modifier = Modifier.fillMaxSize(1f).padding(it)) {
-            SettingsMenu {  }
+            SettingsMenu {
+                navHostController.navigate("profile_setting")
+            }
         }
 
     }
@@ -65,7 +68,9 @@ fun SettingsMenu(onDetailClick:()->Unit){
             SettingsSection(
                 title = "Settings Interface",
                 options = listOf(
-                    SettingOption("Profile Settings", { Icon(imageVector = Icons.Filled.Person, contentDescription = null) }),
+                    SettingOption("Profile Settings", { Icon(imageVector = Icons.Filled.Person, contentDescription = null) }, onClick = {
+                        onDetailClick()
+                    }),
                     SettingOption("Notification Settings", { Icon(imageVector = Icons.Filled.Notifications, contentDescription = null) })
                 )
             )
@@ -184,14 +189,17 @@ fun SettingItem(option: SettingOption) {
         leadingContent = {
             option.icon()
         },
-        modifier = Modifier.padding(bottom = 3.dp)
+        modifier = Modifier.padding(bottom = 3.dp).clickable {
+            option.onClick()
+        }
     )
 }
 
 data class SettingOption(
     val title: String,
     val icon: @Composable ()->Unit,
-    val subtitle: String? = null
+    val subtitle: String? = null,
+    val onClick: ()->Unit={}
 )
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
