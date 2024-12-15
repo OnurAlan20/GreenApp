@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.greenapp.R
 import com.example.greenapp.components.BottomAppBar
 import com.example.greenapp.components.EcoForumTopAppBar
@@ -26,7 +27,7 @@ import com.example.greenapp.components.TopicCreationButton
 import com.example.greenapp.model.TopicData
 
 @Composable
-fun ForumTopicScreen(){
+fun ForumTopicScreen(navController: NavHostController) {
 
     val topics = listOf(
         TopicData(
@@ -94,9 +95,9 @@ fun ForumTopicScreen(){
     Scaffold(
         bottomBar = {
             BottomAppBar(
-                onChatClick = { /* AI Chat ekranına git */ },
-                onForumClick = { /* Forum ekranına git */ },
-                onSettingsClick = { /* Ayarlar ekranına git */ }
+                onChatClick = { navController.navigate("forum_topics")},
+                onForumClick = { navController.navigate("forum_posts") },
+                onSettingsClick = { navController.navigate("forum_topics") }
             )
         },
         topBar = {
