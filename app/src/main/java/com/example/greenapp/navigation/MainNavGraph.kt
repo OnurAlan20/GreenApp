@@ -6,10 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.greenapp.screens.ForumPostCreateScreen
 import com.example.greenapp.screens.ForumPostScreen
-import com.example.greenapp.screens.ForumTopicCreateScreen
-import com.example.greenapp.screens.ForumTopicScreen
 import com.example.greenapp.screens.ProfileSettingScreen
-import com.example.greenapp.screens.SettingsScreen
 import com.example.greenapp.screens.SettingsScreen
 
 @Composable
