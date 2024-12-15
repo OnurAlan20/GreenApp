@@ -25,10 +25,11 @@ class LoginRegisterActivity : ComponentActivity() {
         setContent {
             GreenAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { it ->
+                    println(it.calculateTopPadding())
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "login"
+                        startDestination = "register"
                     ) {
                         composable("login") {
                             LoginScreen(onRegisterClick = { navController.navigate("register") })

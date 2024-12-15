@@ -37,6 +37,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.greenapp.R
 
+
+
+
+
+
+
 @Composable
 fun RegisterScreen(onLoginClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
