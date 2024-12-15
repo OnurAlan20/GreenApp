@@ -8,6 +8,8 @@ import com.example.greenapp.screens.ForumPostCreateScreen
 import com.example.greenapp.screens.ForumPostScreen
 import com.example.greenapp.screens.ForumTopicCreateScreen
 import com.example.greenapp.screens.ForumTopicScreen
+import com.example.greenapp.screens.SettingsScreen
+import com.example.greenapp.screens.SettingsScreen
 
 @Composable
 fun MainNavGraph(navController: NavHostController) {
@@ -23,6 +25,9 @@ fun MainNavGraph(navController: NavHostController) {
         }
         composable("create_topic") {
             ForumTopicCreateScreen(navController)
+        }
+        composable("settings_menu") {
+            SettingsScreen(navController)
         }
     }
 }
