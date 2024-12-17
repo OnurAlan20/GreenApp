@@ -104,7 +104,7 @@ fun BottomAppBar(navController: NavHostController) {
                     .fillMaxHeight()
             ) {
                 IconButton(onClick = {
-                    navController.navigate("profile_setting")
+                    navController.navigate("settings_menu")
                 }, modifier = Modifier.fillMaxSize()) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,

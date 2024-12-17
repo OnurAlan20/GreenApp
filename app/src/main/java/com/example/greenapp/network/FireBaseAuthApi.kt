@@ -79,13 +79,14 @@ public object FireBaseAuthApi {
         val data = firestore.collection("users").document(getLoggedInUser()).get().await()
         return data.data
     }
-    suspend fun updateUserData(userName:String,lastName:String,firstName:String,phoneNumber: String,email: String,onFail:(e:String)->Unit={},onSuccess: () -> Unit){
+    suspend fun updateUserData(userName:String,lastName:String,firstName:String,imageUrl:String,phoneNumber: String,email: String,onFail:(e:String)->Unit={},onSuccess: () -> Unit){
         val updatedData = mapOf(
             "userName" to userName,
             "lastName" to lastName,
             "firstName" to firstName,
             "phoneNumber" to phoneNumber,
-            "email" to email
+            "email" to email,
+            "userImage" to imageUrl
         )
         firestore.collection("users").document(getLoggedInUser()).update(updatedData).addOnFailureListener {
             onFail(it.localizedMessage)

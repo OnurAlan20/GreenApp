@@ -38,12 +38,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.greenapp.R
+import com.example.greenapp.components.BackIcon
 import com.example.greenapp.components.BottomAppBar
 
 @Composable
 fun SettingsScreen(navHostController: NavHostController){
     val navController = rememberNavController()
-    Scaffold (topBar = { SettingsTopAppBar(title = "Settings") }, bottomBar = { SettingsBottomAppBar(navController) }){
+    Scaffold (topBar = { SettingsTopAppBar(title = "Settings", navHostController = navHostController) }, bottomBar = { SettingsBottomAppBar(navController) }){
         it->
         Surface(modifier = Modifier.fillMaxSize(1f).padding(it)) {
             SettingsMenu {
@@ -100,7 +101,7 @@ fun SettingsBottomAppBar(navController: NavHostController){
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsTopAppBar(onMenuClick: () -> Unit={},title: String="Settings",pos:Float=0.35f) {
+fun SettingsTopAppBar(onMenuClick: () -> Unit={},title: String="Settings",pos:Float=0.35f,navHostController: NavHostController= rememberNavController()) {
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth(),
@@ -113,10 +114,7 @@ fun SettingsTopAppBar(onMenuClick: () -> Unit={},title: String="Settings",pos:Fl
                 // Menü İkonu
                 IconButton(onClick = onMenuClick,modifier = Modifier.background(color = Color.Transparent).fillMaxWidth(pos)) {
                     Row(Modifier.fillMaxWidth(1f)) {
-                        Icon(
-                            imageVector = Icons.Sharp.KeyboardArrowLeft, // Menü ikonu
-                            contentDescription = "Menu"
-                        )
+                        BackIcon(navHostController)
                     }
                 }
                 // Başlık

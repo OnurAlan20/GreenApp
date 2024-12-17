@@ -1,8 +1,15 @@
 package com.example.greenapp.screens
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,6 +52,19 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 
 @OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -60,7 +80,29 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
     var lastName by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
+    var imageUrl by remember { mutableStateOf("") }
     val greenColor = Color(0xFF00C853)
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val file = getFileFromUri(context as Activity, it)
+            val fileName = "profile_picture.jpg"
+            uploadImageToImgBB(
+                file,
+                fileName,
+                onSuccess = { url ->
+                    imageUrl = url
+                    toastMessage = "Image uploaded successfully!"
+                    showToast = true
+                },
+                onFailure = { error ->
+                    toastMessage = error
+                    showToast = true
+                }
+            )
+        }
+    }
     GlobalScope.launch(Dispatchers.IO) {
         val data = FireBaseAuthApi.getUserData {  }
         username= data?.get("userName").toString()
@@ -68,8 +110,9 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
         phoneNumber = data?.get("phoneNumber").toString()
         firstName = data?.get("firstName").toString()
         lastName = data?.get("lastName").toString()
+        imageUrl = data?.get("userImage").toString()
     }
-    Scaffold (topBar = { SettingsTopAppBar(title = "Profile Settings", pos = 0.25f) }, bottomBar = { SettingsBottomAppBar(navController) }){
+    Scaffold (topBar = { SettingsTopAppBar(title = "Profile Settings", pos = 0.25f, navHostController = navHostController) }, bottomBar = { SettingsBottomAppBar(navController) }){
             it->
         Surface(modifier = Modifier.fillMaxSize(1f).padding(it).background(Color(0xFFE8E8E8))) {
 
@@ -84,12 +127,14 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
 
                 // Profile Image
                 AsyncImage(
-                    model = "", // Replace with actual URL
+                    model = imageUrl, // Replace with actual URL
                     contentDescription = "Profile Picture",
                     placeholder = painterResource(id = R.drawable.place_holder_pp), // Add a placeholder resource
                     modifier = Modifier
                         .size(100.dp)
-                        .clip(CircleShape)
+                        .clip(CircleShape).clickable {
+                            imagePickerLauncher.launch("image/*")
+                        }
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -126,7 +171,7 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
 
                 Spacer(modifier = Modifier.height(24.dp))
                 if (showToast){
-                    Toast.makeText(context,toastMessage,Toast.LENGTH_SHORT)
+                    Toast.makeText(context,toastMessage,Toast.LENGTH_SHORT).show()
                     showToast=false
                 }
                 // Save Changes Button
@@ -138,6 +183,7 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
                             firstName = firstName,
                             email = email,
                             phoneNumber = phoneNumber,
+                            imageUrl = imageUrl,
                             onSuccess = {
                                 toastMessage= "Successfully Updated!"
                                 showToast = true
@@ -208,3 +254,57 @@ fun TextInputField(label: String, value: String, onValueChange: (String) -> Unit
     }
 }
 
+fun uploadImageToImgBB(
+    file: File,
+    fileName: String,
+    onSuccess: (String) -> Unit,
+    onFailure: (String) -> Unit
+) {
+    val url = "https://api.imgbb.com/1/upload?key=d6ac6a2edb0316131b0373c7bca3d277"
+
+    val requestBody = MultipartBody.Builder()
+        .setType(MultipartBody.FORM)
+        .addFormDataPart(
+            "image",
+            fileName,
+            RequestBody.create("image/*".toMediaTypeOrNull(), file)
+        )
+        .build()
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    val client = OkHttpClient()
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            onFailure(e.message ?: "Unknown error")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                val imageUrl = extractImageUrlFromResponse(responseBody)
+                onSuccess(imageUrl)
+            } else {
+                onFailure("Error: ${response.message}")
+            }
+        }
+    })
+}
+
+private fun extractImageUrlFromResponse(responseBody: String?): String {
+    val jsonObject = JSONObject(responseBody ?: "")
+    return jsonObject.getJSONObject("data").getString("url")
+}
+
+private fun getFileFromUri(activity: Activity, uri: Uri): File {
+    val inputStream: InputStream? = activity.contentResolver.openInputStream(uri)
+    val file = File(activity.cacheDir, "temp_image.jpg")
+    val outputStream = FileOutputStream(file)
+    inputStream?.copyTo(outputStream)
+    inputStream?.close()
+    outputStream.close()
+    return file
+}
