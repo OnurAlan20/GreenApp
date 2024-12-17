@@ -73,4 +73,6 @@ dependencies {
     implementation("org.json:json:20230227")
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 }
