@@ -44,7 +44,7 @@ import com.example.greenapp.components.BottomAppBar
 @Composable
 fun SettingsScreen(navHostController: NavHostController){
     val navController = rememberNavController()
-    Scaffold (topBar = { SettingsTopAppBar(title = "Settings", navHostController = navHostController) }, bottomBar = { BottomAppBar(navController) }){
+    Scaffold (topBar = { SettingsTopAppBar(title = "Settings", navHostController = navHostController) }, bottomBar = { BottomAppBar(navHostController) }){
         it->
         Surface(modifier = Modifier.fillMaxSize(1f).padding(it)) {
             SettingsMenu {

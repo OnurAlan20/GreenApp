@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.example.greenapp.model.PostsData
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObjects
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -37,6 +38,7 @@ class FireBaseForumPostApi {
 
     fun getPosts(onSuccess: (List<PostsData>) -> Unit, onFailure: (Exception) -> Unit) {
         firestore.collection("posts")
+            .orderBy("creationDate", Query.Direction.DESCENDING) // creationDate'e göre azalan sıralama
             .get()
             .addOnSuccessListener { snapshot ->
                 val posts = snapshot.toObjects<PostsData>()
