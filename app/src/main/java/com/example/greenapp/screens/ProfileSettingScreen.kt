@@ -68,10 +68,9 @@ import java.io.InputStream
 
 @OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ProfileSettingScreen(navHostController: NavHostController = rememberNavController()){
-    val navController = rememberNavController()
+fun ProfileSettingScreen(navController: NavHostController) {
     val context = LocalContext.current
     var username by remember { mutableStateOf("EmilyJ") }
     var email by remember { mutableStateOf("emily.j@example.com") }
@@ -104,23 +103,30 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
         }
     }
     GlobalScope.launch(Dispatchers.IO) {
-        val data = FireBaseAuthApi.getUserData {  }
-        username= data?.get("userName").toString()
+        val data = FireBaseAuthApi.getUserData { }
+        username = data?.get("userName").toString()
         email = data?.get("email").toString()
         phoneNumber = data?.get("phoneNumber").toString()
         firstName = data?.get("firstName").toString()
         lastName = data?.get("lastName").toString()
         imageUrl = data?.get("userImage").toString()
     }
-    Scaffold (topBar = { SettingsTopAppBar(title = "Profile Settings", pos = 0.25f, navHostController = navHostController) }, bottomBar = { SettingsBottomAppBar(navController) }){
-            it->
-        Surface(modifier = Modifier.fillMaxSize(1f).padding(it).background(Color(0xFFE8E8E8))) {
+    Scaffold(topBar = {
+        SettingsTopAppBar(
+            title = "Profile Settings",
+            pos = 0.25f,
+            navController = navController
+        )
+    }, bottomBar = { SettingsBottomAppBar(navController) }) { it ->
+        Surface(modifier = Modifier
+            .fillMaxSize(1f)
+            .padding(it)
+            .background(Color(0xFFE8E8E8))) {
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp)
-                    ,
+                    .padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -132,7 +138,8 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
                     placeholder = painterResource(id = R.drawable.place_holder_pp), // Add a placeholder resource
                     modifier = Modifier
                         .size(100.dp)
-                        .clip(CircleShape).clickable {
+                        .clip(CircleShape)
+                        .clickable {
                             imagePickerLauncher.launch("image/*")
                         }
                 )
@@ -149,7 +156,7 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
 
                 // Username handle
                 Text(
-                    text = "@"+username,
+                    text = "@" + username,
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -170,30 +177,32 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
                 TextInputField(label = "Phone Number", value = phoneNumber) { phoneNumber = it }
 
                 Spacer(modifier = Modifier.height(24.dp))
-                if (showToast){
-                    Toast.makeText(context,toastMessage,Toast.LENGTH_SHORT).show()
-                    showToast=false
+                if (showToast) {
+                    Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
+                    showToast = false
                 }
                 // Save Changes Button
                 Button(
-                    onClick = { GlobalScope.launch(Dispatchers.IO) {
-                        FireBaseAuthApi.updateUserData(
-                            userName = username,
-                            lastName = lastName,
-                            firstName = firstName,
-                            email = email,
-                            phoneNumber = phoneNumber,
-                            imageUrl = imageUrl,
-                            onSuccess = {
-                                toastMessage= "Successfully Updated!"
-                                showToast = true
-                            },
-                            onFail = {
-                                toastMessage = it
-                                showToast = true
-                            }
-                        )
-                    } },
+                    onClick = {
+                        GlobalScope.launch(Dispatchers.IO) {
+                            FireBaseAuthApi.updateUserData(
+                                userName = username,
+                                lastName = lastName,
+                                firstName = firstName,
+                                email = email,
+                                phoneNumber = phoneNumber,
+                                imageUrl = imageUrl,
+                                onSuccess = {
+                                    toastMessage = "Successfully Updated!"
+                                    showToast = true
+                                },
+                                onFail = {
+                                    toastMessage = it
+                                    showToast = true
+                                }
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -227,7 +236,6 @@ fun ProfileSettingScreen(navHostController: NavHostController = rememberNavContr
                     )
                 }
             }
-
 
 
         }

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,14 +32,12 @@ fun EcoForumTopAppBar(iconId:Int,title:String,onIconClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Menü İkonu
                 IconButton(onClick = onIconClick) {
                     Icon(
-                        painter = painterResource(id = iconId),
+                        imageVector = Icons.Sharp.KeyboardArrowLeft,
                         contentDescription = "Menu",
                         tint = Color.Black,)
                 }
-                // Başlık
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
@@ -48,3 +48,4 @@ fun EcoForumTopAppBar(iconId:Int,title:String,onIconClick: () -> Unit) {
         },
     )
 }
+

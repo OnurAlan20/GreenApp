@@ -8,12 +8,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -65,7 +69,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun AiScreen(navHostController: NavHostController){
+fun AiScreen(navHostController: NavHostController) {
     val messageList = remember {
         mutableStateListOf<AIMessageModel>(
 
@@ -79,16 +83,18 @@ fun AiScreen(navHostController: NavHostController){
     }
 
     GlobalScope.launch(Dispatchers.IO) {
-        val data = FireBaseAuthApi.getUserData {  }
-        userName= data?.get("userName").toString()
+        val data = FireBaseAuthApi.getUserData { }
+        userName = data?.get("userName").toString()
         imageUrl = data?.get("userImage").toString()
     }
 
     Scaffold(bottomBar = { BottomAppBar(navHostController) }, topBar = { AiScreenTopAppBar() }) {
-        Surface(modifier = Modifier.padding(it)) {
+        Surface(
+            modifier = Modifier.padding(it)
+        ) {
             Column(modifier = Modifier.fillMaxSize(1f)) {
                 ChatScreen(userImageUrl = imageUrl, userName = userName, messageList = messageList)
-                SendMessage(imageUrl=imageUrl,messageList)
+                SendMessage(imageUrl = imageUrl, messageList)
             }
 
         }
@@ -96,8 +102,13 @@ fun AiScreen(navHostController: NavHostController){
 }
 
 @Composable
-fun MessagePartUser(userImageUrl:String,userName: String,userAIMessageModel: AIMessageModel){
-    Row (modifier = Modifier.fillMaxWidth(1f).padding(10.dp), verticalAlignment = Alignment.CenterVertically){
+fun MessagePartUser(userImageUrl: String, userName: String, userAIMessageModel: AIMessageModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(1f)
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         UserImagePP(userImageUrl)
         Row {
             Spacer(modifier = Modifier.width(8.dp)) // Fotoğraf ile metin arasındaki boşluk
@@ -133,11 +144,15 @@ fun MessagePartUser(userImageUrl:String,userName: String,userAIMessageModel: AIM
 }
 
 @Composable
-fun MessagePartAi(userAIMessageModel: AIMessageModel){
-    Row (modifier = Modifier.fillMaxWidth(1f).padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically){
+fun MessagePartAi(userAIMessageModel: AIMessageModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(1f)
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Row {
-             // Fotoğraf ile metin arasındaki boşluk
+            // Fotoğraf ile metin arasındaki boşluk
             // Metin ve kutu içeriği
             Column(modifier = Modifier.fillMaxWidth(0.86f)) {
                 // Kullanıcı İsmi
@@ -167,23 +182,27 @@ fun MessagePartAi(userAIMessageModel: AIMessageModel){
             }
         }
         Spacer(modifier = Modifier.width(8.dp))
-        Icon(painterResource(R.drawable.bot),
-            tint = Color(0xFF00C853) ,contentDescription = "",
-            modifier = Modifier.size(40.dp))
+        Icon(
+            painterResource(R.drawable.bot),
+            tint = Color(0xFF00C853), contentDescription = "",
+            modifier = Modifier.size(40.dp)
+        )
     }
 }
 
 @Composable
-fun ChatScreen(messageList: MutableList<AIMessageModel>,userImageUrl:String,userName:String){
-    Box(modifier = Modifier
-        .fillMaxWidth(1f)
-        .fillMaxHeight(0.9f)){
+fun ChatScreen(messageList: MutableList<AIMessageModel>, userImageUrl: String, userName: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(1f)
+            .padding(top = 25.dp)
+            .fillMaxHeight(0.85f)
+    ) {
         LazyColumn(modifier = Modifier.fillMaxSize(1f)) {
-            items(messageList){
-                if (it.sender == "user"){
-                    MessagePartUser(userImageUrl,userName,it)
-                }
-                else{
+            items(messageList) {
+                if (it.sender == "user") {
+                    MessagePartUser(userImageUrl, userName, it)
+                } else {
                     MessagePartAi(it)
                 }
             }
@@ -193,7 +212,7 @@ fun ChatScreen(messageList: MutableList<AIMessageModel>,userImageUrl:String,user
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SendMessage(imageUrl: String = "",messageList: MutableList<AIMessageModel>) {
+fun SendMessage(imageUrl: String = "", messageList: MutableList<AIMessageModel>) {
     var message by remember { mutableStateOf("") }
 
     Box(
@@ -216,17 +235,18 @@ fun SendMessage(imageUrl: String = "",messageList: MutableList<AIMessageModel>) 
             // Mesaj metin alanı
             Box(
                 modifier = Modifier
-                    .weight(1f).fillMaxWidth(1f)
+                    .weight(1f)
+                    .fillMaxWidth(1f)
                     .clip(RoundedCornerShape(24.dp))
-                    .background(Color.White) // Mesaj alanı arka plan
+                    .background(Color.White)
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
-                Row (modifier = Modifier.fillMaxWidth(1f)){
+                Row(modifier = Modifier.fillMaxWidth(1f)) {
                     TextField(
                         value = message,
                         onValueChange = { newMessage -> message = newMessage },
-                        placeholder = { Text("Enter your message...", color = Color.Gray,) },
+                        placeholder = { Text("Enter your message...", color = Color.Gray) },
                         singleLine = true,
                         colors = TextFieldDefaults.textFieldColors(
                             containerColor = Color.White,
@@ -235,12 +255,15 @@ fun SendMessage(imageUrl: String = "",messageList: MutableList<AIMessageModel>) 
                         ),
                         modifier = Modifier
                             .weight(1f)
-                            .height(56.dp).fillMaxWidth(1f)// Yüksekliği genişletiyoruz
+                            .height(60.dp)
+                            .fillMaxWidth(1f)
                             .clip(RoundedCornerShape(24.dp)),
                         suffix = {
                             Icon(Icons.Sharp.Send, contentDescription = "", tint = Color.Gray,
                                 modifier = Modifier.clickable {
-                                    sendMessage(messageList = messageList, newMessage = message)
+                                    val tempMessage = message
+                                    sendMessage(messageList = messageList, newMessage = tempMessage)
+                                    message = ""
                                 })
                         }
                     )
@@ -256,24 +279,42 @@ fun SendMessage(imageUrl: String = "",messageList: MutableList<AIMessageModel>) 
 
 @Preview
 @Composable
-fun AiScreenTopAppBar(){
-    Surface(modifier = Modifier.fillMaxWidth(1f)) {
-        Row (modifier = Modifier.fillMaxWidth(1f).padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically){
-            Icon(painter = painterResource(R.drawable.leaf), contentDescription = "", modifier = Modifier.size(30.dp))
+fun AiScreenTopAppBar() {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth(1f)
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
+            .consumeWindowInsets(WindowInsets.safeDrawing)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.leaf),
+                contentDescription = "",
+                modifier = Modifier.size(30.dp)
+            )
             Text("AI Environmental Chat", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            Icon(Icons.Sharp.Notifications, contentDescription = null, modifier = Modifier.size(30.dp))
+            Icon(
+                Icons.Sharp.Notifications,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp)
+            )
         }
     }
 }
 
-fun sendMessage(messageList:MutableList<AIMessageModel>,newMessage:String){
+fun sendMessage(messageList: MutableList<AIMessageModel>, newMessage: String) {
     println("DENEMEEEEE")
-    val aiMessageModel = AIMessageModel("user",newMessage)
+    val aiMessageModel = AIMessageModel("user", newMessage)
     messageList.add(aiMessageModel)
     GlobalScope.launch(Dispatchers.IO) {
         val ai_response = AIService.sendMessage(newMessage)
-        println(ai_response)
-        val aiResponseModel = AIMessageModel("ai",ai_response)
+        val aiResponseModel = AIMessageModel("ai", ai_response)
         messageList.add(aiResponseModel)
     }
 }
@@ -281,6 +322,6 @@ fun sendMessage(messageList:MutableList<AIMessageModel>,newMessage:String){
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewAiScreen(){
+fun PreviewAiScreen() {
     AiScreen(navHostController = rememberNavController())
 }

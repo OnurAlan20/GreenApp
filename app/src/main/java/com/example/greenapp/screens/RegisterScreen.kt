@@ -1,14 +1,20 @@
 package com.example.greenapps.screens
+
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,9 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,18 +45,13 @@ import androidx.compose.ui.unit.sp
 import com.example.greenapp.R
 import com.example.greenapp.network.FireBaseAuthApi
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.internal.wait
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun RegisterScreen(onLoginClick: () -> Unit) {
-    val context = LocalContext.current // Toast için context gerekiyor
+    val context = LocalContext.current
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -67,22 +66,27 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
     var toastText by remember { mutableStateOf("") }
     val greenColor = Color(0xFF00C853)
 
-    Surface {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
+            .consumeWindowInsets(WindowInsets.safeDrawing)
+
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()) // Scroll özelliği eklendi
-                .padding(16.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            // App logo or circular icon placeholder
             Image(
                 painter = painterResource(id = R.drawable.loginlogo), // Replace with your logo resource
                 contentDescription = "App Logo",
                 modifier = Modifier
-                    .size(150.dp) // Daha uygun bir boyut için küçültüldü
+                    .size(200.dp) // Daha uygun bir boyut için küçültüldü
                     .padding(16.dp)
             )
 
@@ -202,7 +206,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            if (showToast){
+            if (showToast) {
                 Toast.makeText(context, "Error: " + toastText, Toast.LENGTH_LONG).show()
                 showToast = false
             }
@@ -211,32 +215,53 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
             Button(
                 onClick = {
 
-                        if (password == confirmPassword) {
-                            if (isChecked) {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    try {
-                                        val regResult = FireBaseAuthApi.register(firstName,lastName,phoneNumber,username, email, password, onComplete = {
-                                            Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                    if (password == confirmPassword) {
+                        if (isChecked) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    val regResult = FireBaseAuthApi.register(
+                                        firstName,
+                                        lastName,
+                                        phoneNumber,
+                                        username,
+                                        email,
+                                        password,
+                                        onComplete = {
+                                            Toast.makeText(
+                                                context,
+                                                "Registration successful!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                             onLoginClick() // Navigate to the login screen
-                                        }, onFailed = {it->
+                                        },
+                                        onFailed = { it ->
                                             toastText = it
                                             showToast = true
                                         })
-                                        println("Register Send")
+                                    println("Register Send")
 
-                                    } catch (e: Exception) {
-                                        withContext(Dispatchers.Main) {
-                                            Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
-                                        }
-                                        println("Registration error: ${e.printStackTrace()}")
+                                } catch (e: Exception) {
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            "An error occurred: ${e.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
+                                    println("Registration error: ${e.printStackTrace()}")
                                 }
-                            } else {
-                                Toast.makeText(context, "Please accept the Terms and Conditions.", Toast.LENGTH_SHORT).show()
                             }
                         } else {
-                            Toast.makeText(context, "Passwords do not match.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Please accept the Terms and Conditions.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+                    } else {
+                        Toast.makeText(context, "Passwords do not match.", Toast.LENGTH_SHORT)
+                            .show()
+                    }
 
                 },
                 modifier = Modifier
@@ -253,7 +278,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
             Row {
                 Text(
                     text = "Already have an account? Log In",
-                    modifier = Modifier.clickable(onClick = {onLoginClick()}),
+                    modifier = Modifier.clickable(onClick = { onLoginClick() }),
                     color = Color.Gray
                 )
             }
@@ -264,6 +289,6 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewRegisterScreen(){
-    RegisterScreen{}
+fun PreviewRegisterScreen() {
+    RegisterScreen {}
 }

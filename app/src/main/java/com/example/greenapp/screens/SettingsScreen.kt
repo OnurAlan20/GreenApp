@@ -42,48 +42,86 @@ import com.example.greenapp.components.BackIcon
 import com.example.greenapp.components.BottomAppBar
 
 @Composable
-fun SettingsScreen(navHostController: NavHostController){
-    val navController = rememberNavController()
-    Scaffold (topBar = { SettingsTopAppBar(title = "Settings", navHostController = navHostController) }, bottomBar = { BottomAppBar(navHostController) }){
-        it->
-        Surface(modifier = Modifier.fillMaxSize(1f).padding(it)) {
+fun SettingsScreen(navController: NavHostController) {
+    Scaffold(topBar = { SettingsTopAppBar(title = "Settings", navController = navController) },
+        bottomBar = { BottomAppBar(navController) }) {
+        Surface(modifier = Modifier
+            .fillMaxSize(1f)
+            .padding(it)) {
             SettingsMenu {
-                navHostController.navigate("profile_setting")
+                navController.navigate("profile_setting")
             }
         }
 
     }
 }
+
 @Composable
-fun SettingsMenu(onDetailClick:()->Unit){
+fun SettingsMenu(onDetailClick: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize(1f), color = Color(0xFFE8E8E8)) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Settings Interface Section
             SettingsSection(
                 title = "Settings Interface",
                 options = listOf(
-                    SettingOption("Profile Settings", { Icon(imageVector = Icons.Filled.Person, contentDescription = null) }, onClick = {
-                        onDetailClick()
-                    }),
-                    SettingOption("Notification Settings", { Icon(imageVector = Icons.Filled.Notifications, contentDescription = null) })
+                    SettingOption(
+                        "Profile Settings",
+                        { Icon(imageVector = Icons.Filled.Person, contentDescription = null) },
+                        onClick = {
+                            onDetailClick()
+                        }),
+                    SettingOption(
+                        "Notification Settings",
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Notifications,
+                                contentDescription = null
+                            )
+                        })
                 )
             )
 
-            // Privacy & Theme Section
             SettingsSection(
                 title = "Privacy & Theme",
                 options = listOf(
-                    SettingOption("Privacy Settings", { Icon(imageVector = Icons.Filled.Lock, contentDescription = null) }),
-                    SettingOption("App Theme", { Icon(painter = painterResource(R.drawable.bright_icon), contentDescription = null, modifier = Modifier.size(30.dp)) }, subtitle = "Light"),
-                    SettingOption("Language Settings", { Icon(painter = painterResource(R.drawable.translation), contentDescription = null, modifier = Modifier.size(25.dp)) }, subtitle = "English")
+                    SettingOption(
+                        "Privacy Settings",
+                        { Icon(imageVector = Icons.Filled.Lock, contentDescription = null) }),
+                    SettingOption(
+                        "App Theme",
+                        {
+                            Icon(
+                                painter = painterResource(R.drawable.bright_icon),
+                                contentDescription = null,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        },
+                        subtitle = "Light"
+                    ),
+                    SettingOption(
+                        "Language Settings",
+                        {
+                            Icon(
+                                painter = painterResource(R.drawable.translation),
+                                contentDescription = null,
+                                modifier = Modifier.size(25.dp)
+                            )
+                        },
+                        subtitle = "English"
+                    )
                 )
             )
 
-            // Account Section
             SettingsSection(
                 title = "Account",
                 options = listOf(
-                    SettingOption("Account Settings", { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null) }),
+                    SettingOption(
+                        "Account Settings",
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.AccountCircle,
+                                contentDescription = null
+                            )
+                        }),
                     SettingOption("Log Out",
                         { Icon(imageVector = Icons.Filled.ExitToApp, contentDescription = null) })
                 )
@@ -93,7 +131,7 @@ fun SettingsMenu(onDetailClick:()->Unit){
 }
 
 @Composable
-fun SettingsBottomAppBar(navController: NavHostController){
+fun SettingsBottomAppBar(navController: NavHostController) {
     BottomAppBar(navController)
 }
 
@@ -101,7 +139,12 @@ fun SettingsBottomAppBar(navController: NavHostController){
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsTopAppBar(onMenuClick: () -> Unit={},title: String="Settings",pos:Float=0.35f,navHostController: NavHostController= rememberNavController()) {
+fun SettingsTopAppBar(
+    onMenuClick: () -> Unit = {},
+    title: String = "Settings",
+    pos: Float = 0.35f,
+    navController: NavHostController = rememberNavController()
+) {
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth(),
@@ -109,15 +152,20 @@ fun SettingsTopAppBar(onMenuClick: () -> Unit={},title: String="Settings",pos:Fl
             Row(
 
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(top = 5.dp, bottom = 7.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp, bottom = 7.dp)
             ) {
-                // Menü İkonu
-                IconButton(onClick = onMenuClick,modifier = Modifier.background(color = Color.Transparent).fillMaxWidth(pos)) {
+                IconButton(
+                    onClick = onMenuClick,
+                    modifier = Modifier
+                        .background(color = Color.Transparent)
+                        .fillMaxWidth(pos)
+                ) {
                     Row(Modifier.fillMaxWidth(1f)) {
-                        BackIcon(navHostController)
+                        BackIcon(navController)
                     }
                 }
-                // Başlık
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
@@ -154,13 +202,16 @@ fun SettingsSection(title: String, options: List<SettingOption>) {
 fun SettingItem(option: SettingOption) {
     ListItem(
         headlineContent = {
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth(1f)) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(1f)
+            ) {
                 Text(
                     text = option.title,
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Black
                 )
-                Icon(imageVector = Icons.Sharp.KeyboardArrowRight,contentDescription = null)
+                Icon(imageVector = Icons.Sharp.KeyboardArrowRight, contentDescription = null)
             }
 
         },
@@ -176,20 +227,23 @@ fun SettingItem(option: SettingOption) {
         leadingContent = {
             option.icon()
         },
-        modifier = Modifier.padding(bottom = 3.dp).clickable {
-            option.onClick()
-        }
+        modifier = Modifier
+            .padding(bottom = 3.dp)
+            .clickable {
+                option.onClick()
+            }
     )
 }
 
 data class SettingOption(
     val title: String,
-    val icon: @Composable ()->Unit,
+    val icon: @Composable () -> Unit,
     val subtitle: String? = null,
-    val onClick: ()->Unit={}
+    val onClick: () -> Unit = {}
 )
+
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewProfileSettingScreen(){
-    SettingsMenu {  }
+fun PreviewProfileSettingScreen() {
+    SettingsMenu { }
 }

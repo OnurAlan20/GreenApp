@@ -18,37 +18,43 @@ public object FireBaseAuthApi {
     /**
      * Register a new user with email and password and save user data in Firestore.
      */
-    fun register(firstName:String,lastName:String,phoneNumber:String,userName: String, email: String, password: String,onComplete:()->Unit,onFailed:(err:String)->Unit) {
-            // Create user with Firebase Authentication
-            val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
-                it ->
+    fun register(
+        firstName: String,
+        lastName: String,
+        phoneNumber: String,
+        userName: String,
+        email: String,
+        password: String,
+        onComplete: () -> Unit,
+        onFailed: (err: String) -> Unit
+    ) {
+        val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener { it ->
                 val createdDate = getCurrentDate()
                 val user = UserModel(
                     userName = userName,
                     email = email,
                     id = it.user!!.uid,
                     createdDate = createdDate,
-                    firstName=firstName,
-                    lastName=lastName,
-                    phoneNumber=phoneNumber,
-                    userImage = "https://i.ibb.co/KFn2b9X/3d2c9aba-f834-476e-8a46-30b3e5b77f8b.jpg"
+                    firstName = firstName,
+                    lastName = lastName,
+                    phoneNumber = phoneNumber,
+                    userImage = "https://i.ibb.co/8z0cMwd/a73ffdb1-0aa3-41a4-ac50-b6e15c3a3ac4.png"
+
                 )
-                // Save the user data in Firestore
-                firestore.collection("users").document(it.user!!.uid).set(user).addOnSuccessListener {
-                    println("Firestore Success")
-                    onComplete()
-                }.addOnFailureListener {
+                firestore.collection("users").document(it.user!!.uid).set(user)
+                    .addOnSuccessListener {
+                        println("Firestore Success")
+                        onComplete()
+                    }.addOnFailureListener {
                     println(it.localizedMessage)
                     onFailed(it.localizedMessage)
                 }
 
             }.addOnFailureListener {
-                it->
-                println(it.localizedMessage)
-                onFailed(it.localizedMessage)
-
-            }     // Create a UserModel object
-
+            println(it.localizedMessage)
+            onFailed(it.localizedMessage)
+        }
 
 
     }
@@ -56,7 +62,12 @@ public object FireBaseAuthApi {
     /**
      * Login a user with email and password.
      */
-    suspend fun login(email: String, password: String,onSuccess:()->Unit,onFailed: (err: String) -> Unit){
+    suspend fun login(
+        email: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onFailed: (err: String) -> Unit
+    ) {
 
         val a = firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             onSuccess()
@@ -64,22 +75,32 @@ public object FireBaseAuthApi {
         }.addOnFailureListener {
             onFailed(it.localizedMessage)
         }
-
-
     }
 
     private fun getCurrentDate(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return dateFormat.format(Date())
     }
-    fun getLoggedInUser():String{
+
+    fun getLoggedInUser(): String {
         return firebaseUser.uid
     }
-    suspend fun getUserData(onFail:(e:String)->Unit={}):MutableMap<String,Any>?{
+
+    suspend fun getUserData(onFail: (e: String) -> Unit = {}): MutableMap<String, Any>? {
         val data = firestore.collection("users").document(getLoggedInUser()).get().await()
         return data.data
     }
-    suspend fun updateUserData(userName:String,lastName:String,firstName:String,imageUrl:String,phoneNumber: String,email: String,onFail:(e:String)->Unit={},onSuccess: () -> Unit){
+
+    suspend fun updateUserData(
+        userName: String,
+        lastName: String,
+        firstName: String,
+        imageUrl: String,
+        phoneNumber: String,
+        email: String,
+        onFail: (e: String) -> Unit = {},
+        onSuccess: () -> Unit
+    ) {
         val updatedData = mapOf(
             "userName" to userName,
             "lastName" to lastName,
@@ -88,11 +109,11 @@ public object FireBaseAuthApi {
             "email" to email,
             "userImage" to imageUrl
         )
-        firestore.collection("users").document(getLoggedInUser()).update(updatedData).addOnFailureListener {
-            onFail(it.localizedMessage)
-        }.addOnSuccessListener {
+        firestore.collection("users").document(getLoggedInUser()).update(updatedData)
+            .addOnFailureListener {
+                onFail(it.localizedMessage)
+            }.addOnSuccessListener {
             onSuccess()
         }
-
     }
 }

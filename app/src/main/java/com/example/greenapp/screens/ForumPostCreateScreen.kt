@@ -1,7 +1,5 @@
 package com.example.greenapp.screens
 
-import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,10 +41,8 @@ import androidx.navigation.NavHostController
 import com.example.greenapp.R
 import com.example.greenapp.components.EcoForumTopAppBar
 import com.example.greenapp.model.PostsData
-import com.example.greenapp.model.UserModel
 import com.example.greenapp.network.FireBaseAuthApi
 import com.example.greenapp.network.FireBaseForumPostApi
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
